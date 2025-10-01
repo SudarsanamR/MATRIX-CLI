@@ -2433,7 +2433,7 @@ def main_menu() -> None:
     """
     manager = MatrixManager()
     clear_screen()
-    print_header("Matrix Calculator v2.2.0")
+    print_header("Matrix Calculator v2.3.0")
     print_info("Type '?' for help at any time")
     
     while True:
