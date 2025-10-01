@@ -1,8 +1,8 @@
 # Matrix Calculator CLI - Complete Documentation
 
-**Version:** 2.2.0 | **Updated:** 2025-10-01 | **License:** MIT
+**Version:** 2.3.0 | **Updated:** 2025-10-02 | **License:** MIT
 
-A powerful CLI for matrix operations with symbolic computation support, now featuring advanced decompositions, matrix properties, and performance optimizations.
+A powerful CLI for matrix operations with symbolic computation support, advanced performance optimization, plugin system, and comprehensive security features.
 
 ---
 
@@ -30,18 +30,26 @@ A powerful CLI for matrix operations with symbolic computation support, now feat
 ## Quick Start
 
 ```bash
-# Install
+# Install dependencies
 pip install -r requirements.txt
 
-# Interactive mode
+# 🎯 Interactive Mode (Menu-driven interface)
 python Matrixcodes.py
+# OR
+python matrix_main.py
+python matrix_main.py --interactive
 
-# Command-line mode
-python Matrixcodes.py --import matrix.csv --operation determinant
-python Matrixcodes.py --import A.csv B.csv --operation multiply --export result.csv
+# ⚡ Command-Line Mode (Scripting interface)
+python matrix_main.py create --type identity --size 3
+python matrix_main.py import matrix.csv --format csv
+python matrix_main.py multiply A B --result C
+python matrix_main.py performance --stats
+python matrix_main.py plugin --list
 ```
 
-**Key Commands:** Type `?` (help), `history`, `config`, `clear`, `exit` anywhere
+**🔗 Quick Commands:**
+- **Interactive**: Type `?` (help), `history`, `config`, `clear`, `exit` anywhere
+- **CLI**: Use `python matrix_main.py <command> --help` for detailed command help
 
 ---
 
@@ -54,6 +62,18 @@ python Matrixcodes.py --import A.csv B.csv --operation multiply --export result.
 - ✅ **Dual Modes**: Interactive menus or command-line arguments
 - ✅ **Smart Features**: Auto file extensions, batch input, history tracking, undo
 - ✅ **Enhanced UX**: Colored output, progress bars, confirmations, help system
+
+### New in v2.3.0 - Performance & Extensibility Release
+- 🆕 **Parallel Processing**: Multi-threaded and multi-process matrix operations
+- 🆕 **Plugin System**: Extensible architecture for custom operations
+- 🆕 **Enhanced Security**: Advanced input validation with multiple security levels
+- 🆕 **Performance Monitoring**: Memory usage tracking and operation profiling
+- 🆕 **Additional Formats**: Excel (.xlsx) and Parquet support
+- 🆕 **Rate Limiting**: Protection against resource exhaustion
+- 🆕 **Property-based Testing**: Enhanced test suite with Hypothesis
+- 🆕 **Configuration Schema**: JSON schema validation for configuration
+- 🆕 **Memory Management**: Intelligent memory monitoring and limits
+- 🆕 **Audit Logging**: Security audit trail for sensitive operations
 
 ### New in v2.2.0 - Advanced Features
 - 🆕 **Matrix Decompositions**: LU, QR, SVD, Cholesky
@@ -78,45 +98,111 @@ python Matrixcodes.py --import A.csv B.csv --operation multiply --export result.
 
 ### Dependencies
 ```txt
-numpy>=1.21.0
-sympy>=1.9
-colorama>=0.4.4
-rich>=10.0.0
-tqdm>=4.62.0
-scipy>=1.7.0
+# Core dependencies
+numpy>=1.21.0,<2.0.0
+sympy>=1.9,<2.0.0
+colorama>=0.4.4,<1.0.0
+rich>=10.0.0,<14.0.0
+tqdm>=4.62.0,<5.0.0
+scipy>=1.7.0,<2.0.0
+psutil>=5.8.0,<6.0.0
+
+# Optional dependencies
+pandas>=1.3.0,<3.0.0  # For Excel support
+openpyxl>=3.0.0,<4.0.0  # For Excel support
+pyarrow>=5.0.0,<15.0.0  # For Parquet support
 ```
 
-### Interactive Mode
+### 🎯 Interactive Mode (Menu-driven)
+Perfect for exploration, learning, and step-by-step operations:
+
 ```bash
+# Start interactive mode
 python Matrixcodes.py
+# OR
+python matrix_main.py
+python matrix_main.py --interactive
 ```
-Navigate menus, type commands (`?`, `help`, `history`, `config`, `clear`, `exit`)
 
-### Command-Line Mode
+**Features:**
+- 📝 Menu-driven interface with numbered options
+- 📊 Real-time matrix visualization
+- 🔍 Interactive help system (`?` command)
+- 📝 Command history (`history` command)
+- ⚙️ Configuration management (`config` command)
+- 📋 Matrix templates and examples
+- 🔍 Step-by-step guidance for complex operations
+
+### ⚡ Command-Line Mode (Scripting)
+Perfect for automation, scripting, and batch operations:
+
 ```bash
-# Basic operations
-python Matrixcodes.py --import matrix.csv --operation determinant
-python Matrixcodes.py --import A.csv B.csv --operation multiply --export result.json
+# Matrix operations
+python matrix_main.py create --type identity --size 3 --name I
+python matrix_main.py import data.csv --format csv
+python matrix_main.py multiply A B --result C
+python matrix_main.py export C output.json --format json
 
-# Advanced
-python Matrixcodes.py --import A.csv --operation power --exponent 2 --export A_squared.csv
-python Matrixcodes.py --precision 6 --import matrix.csv --operation eigenvalues
-python Matrixcodes.py --config myconfig.json --import data.csv
-python Matrixcodes.py --no-color --import matrix.csv
+# Advanced features
+python matrix_main.py decompose A --type lu
+python matrix_main.py properties A --property rank
+python matrix_main.py performance --stats
+python matrix_main.py plugin --list
+python matrix_main.py security --level strict
 ```
+
+**Key Advantages:**
+| Interactive Mode | Command-Line Mode |
+|------------------|------------------|
+| 🎯 User-friendly menus | ⚡ Fast automation |
+| 📊 Visual matrix display | 📜 Scriptable operations |
+| 📝 Guided workflows | 🔁 Batch processing |
+| 🔍 Learning-oriented | 🚀 CI/CD integration |
+| 📋 Interactive exploration | 📊 Performance monitoring |
 
 ### Command-Line Arguments
-| Argument | Description |
-|----------|-------------|
-| `--import FILE [FILE ...]` | Import matrix/matrices |
-| `--operation OP` | Operation: add, subtract, multiply, transpose, inverse, determinant, trace, eigenvalues, characteristic, power |
-| `--export FILE` | Export result |
-| `--format FORMAT` | Format: csv, json, latex, numpy, matlab, text |
-| `--precision N` | Decimal places |
-| `--config FILE` | Load configuration |
-| `--exponent N` | For power operation |
-| `--no-color` | Disable colors |
-| `--help` | Show help |
+| Command | Description | Examples |
+|---------|-------------|----------|
+| `create` | Create new matrices | `--type identity --size 3` |
+| `import` | Import matrices from files | `data.csv --format csv` |
+| `export` | Export matrices to files | `A output.json --format json` |
+| `add` | Add two matrices | `A B --result C` |
+| `multiply` | Multiply matrices | `A B --result AB` |
+| `transpose` | Transpose matrix | `A --result AT` |
+| `determinant` | Calculate determinant | `A` |
+| `eigenvalues` | Calculate eigenvalues | `A` |
+| `decompose` | Matrix decompositions | `A --type lu` |
+| `properties` | Matrix properties | `A --property rank` |
+| `list` | List all matrices | (no args) |
+| `show` | Display matrix | `A --preview` |
+| `delete` | Delete matrices | `A B C` |
+| `performance` | Performance monitoring | `--stats --memory` |
+| `plugin` | Plugin management | `--list --load file.py` |
+| `security` | Security settings | `--level strict` |
+| `config` | Configuration | `--show --set key value` |
+
+### Enhanced CLI Features (v2.3.0+)
+```bash
+# Performance monitoring
+python matrix_main.py performance --stats          # Show performance statistics
+python matrix_main.py performance --memory         # Show memory usage
+python matrix_main.py performance --clear-stats    # Clear statistics
+
+# Plugin system
+python matrix_main.py plugin --list                # List loaded plugins
+python matrix_main.py plugin --load plugin.py      # Load a plugin
+python matrix_main.py plugin --execute sum A       # Execute plugin operation
+
+# Security management
+python matrix_main.py security --level moderate    # Set security level
+python matrix_main.py security --validate "x^2"    # Validate expression
+python matrix_main.py security --stats             # Security statistics
+
+# Matrix operations
+python matrix_main.py create --type random --rows 3 --cols 3 --min 0 --max 10
+python matrix_main.py decompose A --type svd --result-prefix A_svd
+python matrix_main.py properties A --property condition
+```
 
 ---
 
@@ -160,6 +246,8 @@ python Matrixcodes.py --no-color --import matrix.csv
 | NumPy | `.npy` | Numerical work | ✅ | ✅ |
 | MATLAB | `.mat` | MATLAB compat | ✅ | ✅ |
 | Text | `.txt` | Human-readable | ✅ | ✅ |
+| Excel | `.xlsx` | Spreadsheets | ✅ | ✅ |
+| Parquet | `.parquet` | Big data | ✅ | ✅ |
 
 ### File Examples
 
@@ -239,6 +327,140 @@ User Input:  x^2, e^x
 Internal:    x**2, E**x
   ↓ (computation)
 Display:     x^2, E^x
+```
+
+---
+
+## Performance & Optimization (v2.3.0+)
+
+### Parallel Processing
+The calculator now supports parallel execution for improved performance on multi-core systems:
+
+```json
+{
+  "parallel_processing": true,
+  "max_workers": 4,
+  "memory_limit_mb": 1024
+}
+```
+
+**Benefits:**
+- Multi-threaded matrix operations
+- Process-based parallel execution for CPU-intensive tasks
+- Automatic fallback to sequential processing if needed
+- Configurable worker limits
+
+### Memory Management
+Intelligent memory monitoring prevents system overload:
+
+- Real-time memory usage tracking
+- Configurable memory limits
+- Automatic warnings for large matrices
+- Memory-efficient operations
+
+### Performance Profiling
+Built-in profiling tools help optimize workflows:
+
+```python
+# Profile any operation
+result = profiler.profile_operation('matrix_multiply', matrix_a.multiply, matrix_b)
+
+# Get performance statistics
+stats = profiler.get_performance_stats()
+print(f"Average execution time: {stats['average_time']:.3f}s")
+```
+
+---
+
+## Plugin System (v2.3.0+)
+
+### Overview
+Extend the calculator with custom operations through the plugin system.
+
+### Creating a Plugin
+```python
+from matrixcalc.plugins import PluginInterface
+
+class MyPlugin(PluginInterface):
+    @property
+    def name(self) -> str:
+        return "my_plugin"
+    
+    @property
+    def version(self) -> str:
+        return "1.0.0"
+    
+    @property
+    def description(self) -> str:
+        return "My custom matrix operations"
+    
+    def get_operations(self) -> Dict[str, Callable]:
+        return {
+            'custom_sum': self.custom_sum,
+            'custom_product': self.custom_product
+        }
+    
+    def custom_sum(self, matrix: Matrix) -> float:
+        """Sum all elements in the matrix."""
+        return sum(sum(float(elem) for elem in row) for row in matrix.data)
+```
+
+### Using Plugins
+```python
+# Load plugins automatically
+plugin_manager.load_all_plugins()
+
+# Execute plugin operations
+result = plugin_manager.execute_operation('custom_sum', my_matrix)
+
+# List available operations
+operations = plugin_manager.get_available_operations()
+```
+
+### Plugin Configuration
+```json
+{
+  "enable_plugins": true,
+  "plugin_directories": ["./plugins", "~/.matrix_calc/plugins"]
+}
+```
+
+---
+
+## Enhanced Security (v2.3.0+)
+
+### Security Levels
+Choose from three security levels for expression validation:
+
+| Level | Description | Use Case |
+|-------|-------------|----------|
+| `strict` | Maximum security, limited functions | Production environments |
+| `moderate` | Balanced security and functionality | General use (default) |
+| `permissive` | Minimal restrictions | Development/research |
+
+### Security Features
+- **Input Sanitization**: Advanced pattern matching to block dangerous code
+- **Rate Limiting**: Prevents resource exhaustion attacks
+- **Expression Timeouts**: Limits execution time for complex expressions
+- **Audit Logging**: Security event tracking
+- **Whitelist Validation**: Only approved functions allowed
+
+### Configuration
+```json
+{
+  "security_level": "moderate",
+  "enable_audit_log": true,
+  "expression_timeout_seconds": 30
+}
+```
+
+### Blocked Patterns
+```python
+# These expressions will be blocked
+"__import__('os')"        # Import statements
+"exec('malicious_code')"  # Code execution
+"open('/etc/passwd')"     # File operations
+"globals()"               # Variable access
 ```
 
 ---

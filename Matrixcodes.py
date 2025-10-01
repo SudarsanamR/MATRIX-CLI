@@ -7,6 +7,7 @@ import csv
 import argparse
 import signal
 import logging
+from logging.handlers import RotatingFileHandler
 import time
 import re
 from typing import List, Union, Optional, Tuple, Dict, Any
@@ -18,21 +19,54 @@ from rich.table import Table
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from tqdm import tqdm
 import scipy.io as sio
+import tempfile
 
 # Initialize colorama for cross-platform colored output
 init(autoreset=True)
 console = Console()
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('matrix_calculator.log'),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
+def _get_log_level_from_config() -> int:
+    level_map = {
+        'DEBUG': logging.DEBUG,
+        'INFO': logging.INFO,
+        'WARNING': logging.WARNING,
+        'ERROR': logging.ERROR,
+        'CRITICAL': logging.CRITICAL,
+    }
+    try:
+        return level_map.get(Config.log_level, logging.INFO)  # type: ignore[name-defined]
+    except Exception:
+        return logging.INFO
+
+
+def setup_logging() -> logging.Logger:
+    """Configure application logging with rotation, respecting Config.log_level."""
+    logger = logging.getLogger('matrix_calculator')
+    logger.setLevel(_get_log_level_from_config())
+
+    # Clear existing handlers to allow reconfiguration
+    while logger.handlers:
+        logger.handlers.pop().close()
+
+    log_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+
+    # Rotating file handler
+    file_handler = RotatingFileHandler('matrix_calculator.log', maxBytes=1_000_000, backupCount=5)
+    file_handler.setFormatter(log_formatter)
+    file_handler.setLevel(_get_log_level_from_config())
+
+    # Console handler
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(log_formatter)
+    console_handler.setLevel(_get_log_level_from_config())
+
+    logger.addHandler(file_handler)
+    logger.addHandler(console_handler)
+    return logger
+
+
+# Initialize logger early with defaults; will be reconfigured after loading config
+logger = setup_logging()
 
 # -----------------------------
 # Configuration Class
@@ -62,6 +96,8 @@ class Config:
                         setattr(cls, key, value)
             print_success(f"Configuration loaded from {filename}")
             logger.info(f"Configuration loaded from {filename}")
+            # Reconfigure logging to apply new level
+            setup_logging()
         except Exception as e:
             print_error(f"Error loading configuration: {str(e)}")
             logger.error(f"Error loading configuration: {str(e)}")
@@ -83,8 +119,12 @@ class Config:
                 'recent_files_list': cls.recent_files_list,
                 'log_level': cls.log_level
             }
-            with open(filename, 'w') as f:
-                json.dump(config_data, f, indent=2)
+            ensure_parent_dir(filename)
+            dir_path = os.path.dirname(filename) or '.'
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.json', dir=dir_path, delete=False) as tf:
+                json.dump(config_data, tf, indent=2)
+                temp_name = tf.name
+            os.replace(temp_name, filename)
             print_success(f"Configuration saved to {filename}")
             logger.info(f"Configuration saved to {filename}")
         except Exception as e:
@@ -155,6 +195,36 @@ def print_header(message: str) -> None:
 def clear_screen() -> None:
     """Clear the terminal screen."""
     os.system('cls' if os.name == 'nt' else 'clear')
+
+
+def ensure_parent_dir(filepath: str) -> None:
+    """Ensure the parent directory of a file path exists."""
+    parent_dir = os.path.dirname(filepath) or '.'
+    try:
+        os.makedirs(parent_dir, exist_ok=True)
+    except Exception as e:
+        logger.error(f"Failed to create directory {parent_dir}: {str(e)}")
+        raise
+
+
+def write_text_atomic(filepath: str, content: str, encoding: str = 'utf-8') -> None:
+    """Atomically write text content to filepath."""
+    ensure_parent_dir(filepath)
+    dir_path = os.path.dirname(filepath) or '.'
+    with tempfile.NamedTemporaryFile(mode='w', encoding=encoding, dir=dir_path, delete=False) as tf:
+        tf.write(content)
+        temp_name = tf.name
+    os.replace(temp_name, filepath)
+
+
+def write_bytes_atomic(filepath: str, data: bytes) -> None:
+    """Atomically write bytes to filepath."""
+    ensure_parent_dir(filepath)
+    dir_path = os.path.dirname(filepath) or '.'
+    with tempfile.NamedTemporaryFile(mode='wb', dir=dir_path, delete=False) as tf:
+        tf.write(data)
+        temp_name = tf.name
+    os.replace(temp_name, filepath)
 
 def confirm_action(message: str) -> bool:
     """Ask user for confirmation."""
@@ -998,10 +1068,14 @@ class Matrix:
             filename: Path to save the CSV file.
         """
         try:
-            with open(filename, 'w', newline='') as f:
-                writer = csv.writer(f)
+            ensure_parent_dir(filename)
+            dir_path = os.path.dirname(filename) or '.'
+            with tempfile.NamedTemporaryFile(mode='w', newline='', dir=dir_path, delete=False) as tf:
+                writer = csv.writer(tf)
                 for row in self.data:
                     writer.writerow([str(elem) for elem in row])
+                temp_name = tf.name
+            os.replace(temp_name, filename)
             print_success(f"Matrix exported to {filename}")
         except Exception as e:
             print_error(f"Error exporting to CSV: {str(e)}")
@@ -1022,8 +1096,12 @@ class Matrix:
             }
             if name:
                 json_data['name'] = name
-            with open(filename, 'w') as f:
-                json.dump(json_data, f, indent=2)
+            ensure_parent_dir(filename)
+            dir_path = os.path.dirname(filename) or '.'
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.json', dir=dir_path, delete=False) as tf:
+                json.dump(json_data, tf, indent=2)
+                temp_name = tf.name
+            os.replace(temp_name, filename)
             print_success(f"Matrix exported to {filename}")
         except Exception as e:
             print_error(f"Error exporting to JSON: {str(e)}")
@@ -1045,9 +1123,8 @@ class Matrix:
                 else:
                     latex_str += "\n"
             latex_str += "\\end{bmatrix}"
-            
-            with open(filename, 'w') as f:
-                f.write(latex_str)
+
+            write_text_atomic(filename, latex_str)
             print_success(f"Matrix exported to {filename}")
         except Exception as e:
             print_error(f"Error exporting to LaTeX: {str(e)}")
@@ -1063,7 +1140,12 @@ class Matrix:
             # Convert to float for numerical storage
             numeric_data = [[float(sp.N(elem)) for elem in row] for row in self.data]
             np_array = np.array(numeric_data)
-            np.save(filename, np_array)
+            ensure_parent_dir(filename)
+            dir_path = os.path.dirname(filename) or '.'
+            with tempfile.NamedTemporaryFile(suffix='.npy', dir=dir_path, delete=False) as tf:
+                temp_name = tf.name
+            np.save(temp_name, np_array)
+            os.replace(temp_name, filename)
             print_success(f"Matrix exported to {filename}")
         except Exception as e:
             print_error(f"Error exporting to NumPy file: {str(e)}")
@@ -1080,7 +1162,12 @@ class Matrix:
             # Convert to float for numerical storage
             numeric_data = [[float(sp.N(elem)) for elem in row] for row in self.data]
             np_array = np.array(numeric_data)
-            sio.savemat(filename, {variable_name: np_array})
+            ensure_parent_dir(filename)
+            dir_path = os.path.dirname(filename) or '.'
+            with tempfile.NamedTemporaryFile(suffix='.mat', dir=dir_path, delete=False) as tf:
+                temp_name = tf.name
+            sio.savemat(temp_name, {variable_name: np_array})
+            os.replace(temp_name, filename)
             print_success(f"Matrix exported to {filename}")
         except Exception as e:
             print_error(f"Error exporting to MATLAB file: {str(e)}")

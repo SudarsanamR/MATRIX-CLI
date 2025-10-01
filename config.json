@@ -1,0 +1,14 @@
+{
+  "precision": 4,
+  "default_export_format": "csv",
+  "colored_output": true,
+  "auto_save": false,
+  "save_directory": "./matrices",
+  "show_progress": true,
+  "max_history_size": 20,
+  "enable_caching": true,
+  "matrix_size_warning_threshold": 1000,
+  "recent_files_list": [],
+  "log_level": "INFO"
+}
+

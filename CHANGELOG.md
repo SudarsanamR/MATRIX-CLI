@@ -5,6 +5,94 @@ All notable changes to the Matrix Calculator CLI project will be documented in t
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2025-10-02
+
+### Added
+- **Parallel Processing**: Multi-threaded and multi-process matrix operations
+  - Configurable worker limits
+  - Automatic fallback to sequential processing
+  - Support for both thread-based and process-based execution
+- **Plugin System**: Extensible architecture for custom operations
+  - Plugin interface for creating custom matrix operations
+  - Automatic plugin discovery and loading
+  - Example plugin with statistical operations
+  - Plugin management commands
+- **Enhanced Security**: Advanced input validation with multiple security levels
+  - Three security levels: strict, moderate, permissive
+  - Rate limiting to prevent resource exhaustion
+  - Expression timeout controls
+  - Audit logging for security events
+  - Expanded dangerous pattern detection
+- **Performance Monitoring**: Memory usage tracking and operation profiling
+  - Real-time memory usage monitoring
+  - Configurable memory limits
+  - Performance profiling with detailed statistics
+  - Operation timing and memory delta tracking
+- **Additional File Formats**:
+  - Excel (.xlsx) support with pandas and openpyxl
+  - Parquet format support with pyarrow
+  - Enhanced format detection and handling
+- **Enhanced Configuration System**:
+  - JSON schema validation for configuration files
+  - New configuration options for performance and security
+  - Better error handling and validation
+- **Improved Test Suite**:
+  - Property-based testing with Hypothesis
+  - Performance benchmarks
+  - Security validation tests
+  - Plugin system tests
+  - Integration tests for end-to-end workflows
+- **Enhanced CLI**:
+  - Auto-completion support preparation
+  - Better error messages and help text
+  - Plugin operation commands
+
+### Changed
+- **Backend System**: Improved dual backend architecture
+  - Better caching integration
+  - Enhanced error handling
+  - Optimized memory usage
+- **Security Validation**: Completely rewritten validation system
+  - Configurable security levels
+  - Better pattern matching
+  - Rate limiting implementation
+- **Configuration Management**: Enhanced configuration system
+  - Schema-based validation
+  - More configuration options
+  - Better defaults and error handling
+- **Dependencies**: Updated and added new dependencies
+  - Added psutil for system monitoring
+  - Optional dependencies for Excel and Parquet support
+  - Enhanced development dependencies
+
+### Fixed
+- Memory leaks in large matrix operations
+- Race conditions in parallel processing
+- Configuration validation edge cases
+- Error handling in plugin system
+- Performance degradation in cached operations
+
+### Security
+- Enhanced input sanitization
+- Rate limiting protection
+- Audit logging for security events
+- Expression timeout controls
+- Stricter validation patterns
+
+### Performance
+- Parallel processing for matrix operations
+- Improved memory management
+- Better caching strategies
+- Optimized file I/O operations
+- Memory usage monitoring and limits
+
+### Documentation
+- Comprehensive plugin development guide
+- Security best practices
+- Performance optimization tips
+- Updated API documentation
+- Enhanced examples and tutorials
+
 ## [2.2.0] - 2025-01-27
 
 ### Added
