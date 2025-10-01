@@ -713,12 +713,10 @@ python Matrixcodes.py --import A.csv --operation power --exponent 2 --precision 
 Matrix Calculator CLI/
 ├── Matrixcodes.py          # Main application (2000+ lines)
 ├── test_matrixcodes.py     # Comprehensive test suite (400+ lines)
+├── test_notation.py     # Small test suite (40+ lines)
 ├── requirements.txt        # Dependencies
-├── config.json            # Configuration
-├── example_matrix.csv     # Sample data
-├── matrix_calculator.log  # Application logs
 ├── .gitignore            # Git ignore
-├── DOCUMENTATION.md      # This file
+├── README.md      # This file
 └── CHANGELOG.md          # Version history
 ```
 
