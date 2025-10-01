@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Matrix Calculator Configuration Schema",
+  "description": "Configuration schema for Matrix Calculator CLI v2.3.0+",
+  "type": "object",
+  "properties": {
+    "precision": {
+      "type": "integer", 
+      "minimum": 0, 
+      "maximum": 20,
+      "description": "Number of decimal places for display"
+    },
+    "default_export_format": {
+      "type": "string", 
+      "enum": ["csv", "json", "latex", "numpy", "matlab", "text", "excel", "parquet"],
+      "description": "Default format for matrix export"
+    },
+    "colored_output": {
+      "type": "boolean",
+      "description": "Enable colored terminal output"
+    },
+    "auto_save": {
+      "type": "boolean",
+      "description": "Automatically save matrices after operations"
+    },
+    "save_directory": {
+      "type": "string",
+      "description": "Default directory for saving matrices"
+    },
+    "show_progress": {
+      "type": "boolean",
+      "description": "Show progress bars for long operations"
+    },
+    "max_history_size": {
+      "type": "integer", 
+      "minimum": 1, 
+      "maximum": 1000,
+      "description": "Maximum number of operations to keep in history"
+    },
+    "enable_caching": {
+      "type": "boolean",
+      "description": "Enable result caching for performance"
+    },
+    "matrix_size_warning_threshold": {
+      "type": "integer", 
+      "minimum": 1,
+      "description": "Matrix size threshold for performance warnings"
+    },
+    "recent_files_list": {
+      "type": "array", 
+      "items": {"type": "string"}, 
+      "maxItems": 10,
+      "description": "List of recently accessed files"
+    },
+    "log_level": {
+      "type": "string", 
+      "enum": ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+      "description": "Logging verbosity level"
+    },
+    "cache_size": {
+      "type": "integer", 
+      "minimum": 1, 
+      "maximum": 10000,
+      "description": "Maximum number of items to cache"
+    },
+    "cache_ttl_seconds": {
+      "type": "integer", 
+      "minimum": 0,
+      "description": "Cache time-to-live in seconds"
+    },
+    "numeric_atol": {
+      "type": "number", 
+      "minimum": 0,
+      "description": "Absolute tolerance for numeric comparisons"
+    },
+    "numeric_rtol": {
+      "type": "number", 
+      "minimum": 0,
+      "description": "Relative tolerance for numeric comparisons"
+    },
+    "log_format": {
+      "type": "string", 
+      "enum": ["plain", "json"],
+      "description": "Log output format"
+    },
+    "parallel_processing": {
+      "type": "boolean",
+      "description": "Enable parallel processing for matrix operations"
+    },
+    "max_workers": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 32,
+      "description": "Maximum number of worker threads for parallel operations"
+    },
+    "memory_limit_mb": {
+      "type": "integer",
+      "minimum": 64,
+      "description": "Memory limit in MB for matrix operations"
+    },
+    "enable_plugins": {
+      "type": "boolean",
+      "description": "Enable plugin system for custom operations"
+    },
+    "plugin_directories": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Directories to search for plugins"
+    },
+    "security_level": {
+      "type": "string",
+      "enum": ["strict", "moderate", "permissive"],
+      "description": "Security validation level for expressions"
+    },
+    "enable_audit_log": {
+      "type": "boolean",
+      "description": "Enable security audit logging"
+    },
+    "expression_timeout_seconds": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 300,
+      "description": "Timeout for expression evaluation in seconds"
+    }
+  },
+  "additionalProperties": false,
+  "required": ["precision", "default_export_format", "colored_output"]
+}
+
