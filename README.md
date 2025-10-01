@@ -1,6 +1,6 @@
 # Matrix Calculator CLI - Complete Documentation
 
-**Version:** 2.2.0 | **Updated:** 2025-01-27 | **License:** MIT
+**Version:** 2.2.0 | **Updated:** 2025-10-01 | **License:** MIT
 
 A powerful CLI for matrix operations with symbolic computation support, now featuring advanced decompositions, matrix properties, and performance optimizations.
 
@@ -505,7 +505,7 @@ python test_matrixcodes.py
 
 ## Version History
 
-### v2.2.0 (2025-01-27) - Advanced Features Release
+### v2.2.0 (2025-10-01) - Advanced Features Release
 **Major Enhancement** with advanced mathematical capabilities
 - ✅ Matrix decompositions (LU, QR, SVD, Cholesky)
 - ✅ Matrix properties (rank, condition number, norms)
@@ -759,7 +759,7 @@ MIT License - Open source and free to use.
 - **Logs**: Check `matrix_calculator.log`
 - **Tests**: Run `python test_matrixcodes.py`
 - **Version**: 2.2.0
-- **Last Updated**: 2025-01-27
+- **Last Updated**: 2025-10-01
 
 ---
 
